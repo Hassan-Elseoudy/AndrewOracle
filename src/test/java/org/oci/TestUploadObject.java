@@ -2,10 +2,13 @@ package org.oci;
 
 
 import com.oracle.bmc.ConfigFileReader;
+import com.oracle.bmc.Region;
 import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
+import com.oracle.bmc.objectstorage.requests.GetNamespaceRequest;
 import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
+import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -20,8 +23,8 @@ import static org.oci.Generator.*;
 
 public class TestUploadObject {
 
-    private static final String NAMESPACE_NAME = "axehnqphw4ez";
-    private static final String BUCKET_NAME = "bucket-20230110-1322";
+    private static String NAMESPACE_NAME;
+    private static final String BUCKET_NAME = "DBMI-DEV-RPS";
     private static final String CONTENT_TYPE = "text/plain";
     private static final String CONTENT_ENCODING = "UTF-8";
     private static final String CONTENT_LANGUAGE = "en-US";
@@ -34,8 +37,18 @@ public class TestUploadObject {
     public static void setUp() throws Exception {
         // Create a file and metadata Map to use in the test.
         metadata = Map.of("key", "value");
-        ConfigFileReader.ConfigFile configFile = ConfigFileReader.parseDefault();
-        provider = new ConfigFileAuthenticationDetailsProvider(configFile);
+//        ConfigFileReader.ConfigFile configFile = ConfigFileReader.parseDefault();
+//        provider = new ConfigFileAuthenticationDetailsProvider(configFile);
+        //TODO() namesapces
+        final ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse("src/main/java/org/oci/OCIProfile.txt");
+        final ConfigFileAuthenticationDetailsProvider provider =
+                new ConfigFileAuthenticationDetailsProvider(configFile);
+
+        ObjectStorage client = new ObjectStorageClient(provider);
+        client.setRegion(Region.US_ASHBURN_1);
+        GetNamespaceRequest getNamespaceRequest = GetNamespaceRequest.builder().build();
+        GetNamespaceResponse getNamespaceResponse = client.getNamespace(getNamespaceRequest);
+        NAMESPACE_NAME = getNamespaceResponse.getValue();
     }
 
     @Test
@@ -82,7 +95,7 @@ public class TestUploadObject {
         String newEncoding = "UTF-16";
         // Create a new file with different encoding
         File newFile = createFileWithEncoding(newEncoding);
-        String object =RandomStringUtils.randomAlphanumeric(10);
+        String object = RandomStringUtils.randomAlphanumeric(10);
 
         // Call the upload method with the new file and encoding
         GetObjectResponse response = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object, metadata, CONTENT_TYPE, newEncoding, CONTENT_LANGUAGE, newFile, "src/main/java/org/oci/OCIProfile.txt");
