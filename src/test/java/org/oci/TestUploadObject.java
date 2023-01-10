@@ -28,6 +28,8 @@ public class TestUploadObject {
     private static Map<String, String> metadata;
     private static ConfigFileAuthenticationDetailsProvider provider;
 
+    private static final UploadObject uploadObject = new UploadObject();
+
     @BeforeAll
     public static void setUp() throws Exception {
         // Create a file and metadata Map to use in the test.
@@ -54,16 +56,9 @@ public class TestUploadObject {
         String contentEncoding1 = "UTF-8";
         String contentLanguage1 = "en-us";
 
-        UploadObject.upload(NAMESPACE_NAME, BUCKET_NAME, object1, metadata, contentType1, contentEncoding1, contentLanguage1, file1);
+        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object1, metadata, contentType1, contentEncoding1, contentLanguage1, file1, "src/main/java/org/oci/OCIProfile.txt");
 
         // Verify the first file was uploaded successfully
-        ObjectStorage client = new ObjectStorageClient(provider);
-        GetObjectResponse response = client.getObject(
-                GetObjectRequest.builder()
-                        .namespaceName(NAMESPACE_NAME)
-                        .bucketName(BUCKET_NAME)
-                        .objectName(object1)
-                        .build());
         assertEquals(contentType1, response.getContentType());
         assertEquals(contentEncoding1, response.getContentEncoding());
 
@@ -73,15 +68,7 @@ public class TestUploadObject {
         String contentEncoding2 = "UTF-8";
         String contentLanguage2 = "en-us";
 
-        UploadObject.upload(NAMESPACE_NAME, BUCKET_NAME, object2, metadata, contentType2, contentEncoding2, contentLanguage2, file2);
-
-        // Verify the second file was uploaded successfully
-        GetObjectResponse response2 = client.getObject(
-                GetObjectRequest.builder()
-                        .namespaceName(NAMESPACE_NAME)
-                        .bucketName(BUCKET_NAME)
-                        .objectName(object2)
-                        .build());
+        GetObjectResponse response2 = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object2, metadata, contentType2, contentEncoding2, contentLanguage2, file2, "src/main/java/org/oci/OCIProfile.txt");
         assertEquals(contentType2, response2.getContentType());
         assertEquals(contentEncoding2, response2.getContentEncoding());
 
@@ -98,16 +85,7 @@ public class TestUploadObject {
         String object =RandomStringUtils.randomAlphanumeric(10);
 
         // Call the upload method with the new file and encoding
-        UploadObject.upload(NAMESPACE_NAME, BUCKET_NAME, object, metadata, CONTENT_TYPE, newEncoding, CONTENT_LANGUAGE, newFile);
-
-        // Verify that the upload was successful by calling the client's getObject method
-        ObjectStorage client = new ObjectStorageClient(provider);
-        GetObjectResponse response = client.getObject(
-                GetObjectRequest.builder()
-                        .namespaceName(NAMESPACE_NAME)
-                        .bucketName(BUCKET_NAME)
-                        .objectName(object)
-                        .build());
+        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object, metadata, CONTENT_TYPE, newEncoding, CONTENT_LANGUAGE, newFile, "src/main/java/org/oci/OCIProfile.txt");
 
         // Assert that the response's content-encoding match what we expect
         assertEquals(newEncoding, response.getContentEncoding());
@@ -124,7 +102,7 @@ public class TestUploadObject {
         File file2 = createFileWithContentType(contentType2, fileName.get(contentType2));
 
         // Call the upload method with the first file and content type
-        UploadObject.upload(NAMESPACE_NAME, BUCKET_NAME, fileName.get(contentType1), metadata, (contentType1), CONTENT_ENCODING, CONTENT_LANGUAGE, file1);
+        uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, fileName.get(contentType1), metadata, (contentType1), CONTENT_ENCODING, CONTENT_LANGUAGE, file1, "src/main/java/org/oci/OCIProfile.txt");
         // Verify that the first upload was successful by calling the client's getObject method
         ObjectStorage client = new ObjectStorageClient(provider);
         GetObjectResponse response1 = client.getObject(
@@ -137,14 +115,8 @@ public class TestUploadObject {
         assertEquals(contentType1, response1.getContentType());
 
         // Call the upload method with the second file and content type
-        UploadObject.upload(NAMESPACE_NAME, BUCKET_NAME, fileName.get(contentType2), metadata, (contentType2), CONTENT_ENCODING, CONTENT_LANGUAGE, file2);
-        // Verify that the second upload was successful by calling the client's getObject method
-        GetObjectResponse response2 = client.getObject(
-                GetObjectRequest.builder()
-                        .namespaceName(NAMESPACE_NAME)
-                        .bucketName(BUCKET_NAME)
-                        .objectName(fileName.get(contentType2))
-                        .build());
+        GetObjectResponse response2 = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, fileName.get(contentType2), metadata, (contentType2), CONTENT_ENCODING, CONTENT_LANGUAGE, file2, "src/main/java/org/oci/OCIProfile.txt");
+
         // Assert that the response's content-type match what we expect
         assertEquals(contentType2, response2.getContentType());
     }
@@ -162,16 +134,9 @@ public class TestUploadObject {
         String contentEncoding = "UTF-8";
         String contentLanguage = "en-us";
 
-        UploadObject.upload(NAMESPACE_NAME, BUCKET_NAME, object, metadata, contentType, contentEncoding, contentLanguage, file);
+        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object, metadata, contentType, contentEncoding, contentLanguage, file, "src/main/java/org/oci/OCIProfile.txt");
 
         // Verify the file was uploaded successfully
-        ObjectStorage client = new ObjectStorageClient(provider);
-        GetObjectResponse response = client.getObject(
-                GetObjectRequest.builder()
-                        .namespaceName(NAMESPACE_NAME)
-                        .bucketName(BUCKET_NAME)
-                        .objectName(object)
-                        .build());
         assertEquals(contentType, response.getContentType());
         assertEquals(contentEncoding, response.getContentEncoding());
 
