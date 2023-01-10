@@ -20,14 +20,57 @@ import java.util.Map;
 
 public class UploadObject {
 
+    /**
+     * Andrew Implementation with Configuration and namespaceName
+     * @param namespaceName
+     * @param bucketName
+     * @param objectName
+     * @param metadata
+     * @param contentType
+     * @param contentEncoding
+     * @param contentLanguage
+     * @param body
+     * @param configurationFilePath
+     * @return
+     * @throws Exception
+     */
     public GetObjectResponse uploadUsingOCIProfile(String namespaceName, String bucketName, String objectName, Map<String, String> metadata, String contentType, String contentEncoding, String contentLanguage, File body, String configurationFilePath) throws Exception {
+        // Andrew
         final ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(configurationFilePath);
 
         final ConfigFileAuthenticationDetailsProvider provider =
                 new ConfigFileAuthenticationDetailsProvider(configFile);
 
         ObjectStorage client = new ObjectStorageClient(provider);
-        client.setRegion(Region.US_ASHBURN_1);
+        //TODO() namesapces
+        GetNamespaceRequest getNamespaceRequest = GetNamespaceRequest.builder().build();
+        GetNamespaceResponse getNamespaceResponse = client.getNamespace(getNamespaceRequest);
+        namespaceName = getNamespaceResponse.getValue();
+
+        return uploadUsingOCIProfile(namespaceName, bucketName, objectName, metadata, contentType, contentEncoding, contentLanguage, body);
+    }
+
+    /**
+     * Hassan Implementation.
+     * @param namespaceName
+     * @param bucketName
+     * @param objectName
+     * @param metadata
+     * @param contentType
+     * @param contentEncoding
+     * @param contentLanguage
+     * @param body
+     * @return
+     * @throws Exception
+     */
+    public GetObjectResponse uploadUsingOCIProfile(String namespaceName, String bucketName, String objectName, Map<String, String> metadata, String contentType, String contentEncoding, String contentLanguage, File body) throws Exception {
+        final ConfigFileReader.ConfigFile configFile = ConfigFileReader.parseDefault();
+
+        final ConfigFileAuthenticationDetailsProvider provider =
+                new ConfigFileAuthenticationDetailsProvider(configFile);
+
+        ObjectStorage client = new ObjectStorageClient(provider);
+        client.setRegion(Region.US_PHOENIX_1);
 
         // configure upload settings as desired
         UploadConfiguration uploadConfiguration =
@@ -37,11 +80,6 @@ public class UploadObject {
                         .build();
 
         UploadManager uploadManager = new UploadManager(client, uploadConfiguration);
-
-         //TODO() namesapces
-         GetNamespaceRequest getNamespaceRequest = GetNamespaceRequest.builder().build();
-         GetNamespaceResponse getNamespaceResponse = client.getNamespace(getNamespaceRequest);
-         namespaceName = getNamespaceResponse.getValue();
 
         PutObjectRequest request =
                 PutObjectRequest.builder()
