@@ -16,20 +16,20 @@ public class Generator {
         return newFile;
     }
 
-    public static File createFileWithContentType(String contentType) throws IOException {
-        File newFile = new File("file_with_" + contentType.replaceAll("//", "_") + "_content_type");
+    public static File createFileWithContentType(String contentType, String fileName) throws IOException {
+        File newFile = new File(fileName);
         try (FileWriter writer = new FileWriter(newFile)) {
             if (contentType.equals("application/json")) {
                 writer.write("{\"key\":\"value\"}");
-            } else {
-                return createSamplePNGImage();
+            } else if (contentType.equals("image/png")) {
+                return createSamplePNGImage(fileName);
             }
         }
         return newFile;
     }
 
-    private static File createSamplePNGImage() throws IOException {
-        File file = new File("path/to/sample_image.png");
+    private static File createSamplePNGImage(String fileName) throws IOException {
+        File file = new File(fileName);
         int width = 100;
         int height = 100;
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
