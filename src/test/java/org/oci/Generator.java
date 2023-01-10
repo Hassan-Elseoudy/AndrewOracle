@@ -9,7 +9,7 @@ import java.io.IOException;
 public class Generator {
 
     public static File createFileWithEncoding(String encoding) throws IOException {
-        File newFile = new File("file_with_" + encoding + "_encoding");
+        File newFile = new File("file_with_" + encoding + "_encoding.txt");
         try (FileWriter writer = new FileWriter(newFile)) {
             writer.write("This is a test file with " + encoding + " encoding.");
         }
