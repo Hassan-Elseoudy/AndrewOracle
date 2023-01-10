@@ -3,9 +3,6 @@ package org.oci;
 
 import com.oracle.bmc.ConfigFileReader;
 import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
-import com.oracle.bmc.objectstorage.ObjectStorage;
-import com.oracle.bmc.objectstorage.ObjectStorageClient;
-import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -21,7 +18,6 @@ import static org.oci.Generator.createFileWithEncoding;
 
 public class TestUploadObject {
 
-    private static String NAMESPACE_NAME = "axehnqphw4ez";
     private static final String BUCKET_NAME = "DBMI-DEV-RPS";
     private static final String CONTENT_TYPE = "text/plain";
     private static final String CONTENT_ENCODING = "UTF-8";
@@ -57,7 +53,7 @@ public class TestUploadObject {
         String contentEncoding1 = "UTF-8";
         String contentLanguage1 = "en-us";
 
-        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object1, metadata, contentType1, contentEncoding1, contentLanguage1, file1);
+        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, object1, metadata, contentType1, contentEncoding1, contentLanguage1, file1.getAbsolutePath());
 
         // Verify the first file was uploaded successfully
         assertEquals(contentType1, response.getContentType());
@@ -69,7 +65,7 @@ public class TestUploadObject {
         String contentEncoding2 = "UTF-8";
         String contentLanguage2 = "en-us";
 
-        GetObjectResponse response2 = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object2, metadata, contentType2, contentEncoding2, contentLanguage2, file2);
+        GetObjectResponse response2 = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, object2, metadata, contentType2, contentEncoding2, contentLanguage2, file2.getAbsolutePath());
         assertEquals(contentType2, response2.getContentType());
         assertEquals(contentEncoding2, response2.getContentEncoding());
 
@@ -86,10 +82,12 @@ public class TestUploadObject {
         String object = RandomStringUtils.randomAlphanumeric(10);
 
         // Call the upload method with the new file and encoding
-        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object, metadata, CONTENT_TYPE, newEncoding, CONTENT_LANGUAGE, newFile);
+        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, object, metadata, CONTENT_TYPE, newEncoding, CONTENT_LANGUAGE, newFile.getAbsolutePath());
 
         // Assert that the response's content-encoding match what we expect
         assertEquals(newEncoding, response.getContentEncoding());
+
+        newFile.delete();
     }
 
     @Test
@@ -103,23 +101,19 @@ public class TestUploadObject {
         File file2 = createFileWithContentType(contentType2, fileName.get(contentType2));
 
         // Call the upload method with the first file and content type
-        uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, fileName.get(contentType1), metadata, (contentType1), CONTENT_ENCODING, CONTENT_LANGUAGE, file1);
-        // Verify that the first upload was successful by calling the client's getObject method
-        ObjectStorage client = new ObjectStorageClient(provider);
-        GetObjectResponse response1 = client.getObject(
-                GetObjectRequest.builder()
-                        .namespaceName(NAMESPACE_NAME)
-                        .bucketName(BUCKET_NAME)
-                        .objectName(fileName.get(contentType1))
-                        .build());
+        GetObjectResponse response1 = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, fileName.get(contentType1), metadata, (contentType1), CONTENT_ENCODING, CONTENT_LANGUAGE, file1.getAbsolutePath());
+
         // Assert that the response's content-type match what we expect
         assertEquals(contentType1, response1.getContentType());
 
         // Call the upload method with the second file and content type
-        GetObjectResponse response2 = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, fileName.get(contentType2), metadata, (contentType2), CONTENT_ENCODING, CONTENT_LANGUAGE, file2);
+        GetObjectResponse response2 = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, fileName.get(contentType2), metadata, (contentType2), CONTENT_ENCODING, CONTENT_LANGUAGE, file2.getAbsolutePath());
 
         // Assert that the response's content-type match what we expect
         assertEquals(contentType2, response2.getContentType());
+
+        file1.delete();
+        file2.delete();
     }
 
     @Test
@@ -135,7 +129,7 @@ public class TestUploadObject {
         String contentEncoding = "UTF-8";
         String contentLanguage = "en-us";
 
-        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(NAMESPACE_NAME, BUCKET_NAME, object, metadata, contentType, contentEncoding, contentLanguage, file);
+        GetObjectResponse response = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, object, metadata, contentType, contentEncoding, contentLanguage, file.getAbsolutePath());
 
         // Verify the file was uploaded successfully
         assertEquals(contentType, response.getContentType());
