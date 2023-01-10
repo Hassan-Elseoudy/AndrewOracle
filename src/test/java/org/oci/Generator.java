@@ -17,7 +17,7 @@ public class Generator {
     }
 
     public static File createFileWithContentType(String contentType) throws IOException {
-        File newFile = new File("file_with_" + contentType + "_content_type");
+        File newFile = new File("file_with_" + contentType.replaceAll("//", "_") + "_content_type");
         try (FileWriter writer = new FileWriter(newFile)) {
             if (contentType.equals("application/json")) {
                 writer.write("{\"key\":\"value\"}");

@@ -21,6 +21,16 @@
             <artifactId>oci-java-sdk-objectstorage</artifactId>
             <version>3.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.oracle.oci.sdk</groupId>
+            <artifactId>oci-java-sdk-addons-resteasy-client-configurator</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.oci.sdk</groupId>
+            <artifactId>oci-java-sdk-common-httpclient-jersey</artifactId>
+            <version>3.2.0</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -47,6 +57,5 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
-
     </dependencies>
 </project>
