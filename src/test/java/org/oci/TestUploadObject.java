@@ -6,13 +6,13 @@ import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import org.testng.Assert;
 
 import java.io.File;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.oci.Generator.createFileWithContentType;
 import static org.oci.Generator.createFileWithEncoding;
 
@@ -27,7 +27,7 @@ public class TestUploadObject {
 
     private static final UploadObject uploadObject = new UploadObject();
 
-    @BeforeAll
+    @BeforeClass
     public static void setUp() throws Exception {
         // Create a file and metadata Map to use in the test.
         metadata = Map.of("key", "value");
@@ -56,8 +56,8 @@ public class TestUploadObject {
         GetObjectResponse response = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, object1, metadata, contentType1, contentEncoding1, contentLanguage1, file1.getAbsolutePath());
 
         // Verify the first file was uploaded successfully
-        assertEquals(contentType1, response.getContentType());
-        assertEquals(contentEncoding1, response.getContentEncoding());
+        Assert.assertEquals(contentType1, response.getContentType());
+        Assert.assertEquals(contentEncoding1, response.getContentEncoding());
 
         // Upload the second file
         String object2 = RandomStringUtils.randomAlphanumeric(10);
@@ -66,8 +66,8 @@ public class TestUploadObject {
         String contentLanguage2 = "en-us";
 
         GetObjectResponse response2 = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, object2, metadata, contentType2, contentEncoding2, contentLanguage2, file2.getAbsolutePath());
-        assertEquals(contentType2, response2.getContentType());
-        assertEquals(contentEncoding2, response2.getContentEncoding());
+        Assert.assertEquals(contentType2, response2.getContentType());
+        Assert.assertEquals(contentEncoding2, response2.getContentEncoding());
 
         // Cleanup the created files
         file1.delete();
@@ -85,7 +85,7 @@ public class TestUploadObject {
         GetObjectResponse response = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, object, metadata, CONTENT_TYPE, newEncoding, CONTENT_LANGUAGE, newFile.getAbsolutePath());
 
         // Assert that the response's content-encoding match what we expect
-        assertEquals(newEncoding, response.getContentEncoding());
+        Assert.assertEquals(newEncoding, response.getContentEncoding());
 
         newFile.delete();
     }
@@ -104,13 +104,13 @@ public class TestUploadObject {
         GetObjectResponse response1 = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, fileName.get(contentType1), metadata, (contentType1), CONTENT_ENCODING, CONTENT_LANGUAGE, file1.getAbsolutePath());
 
         // Assert that the response's content-type match what we expect
-        assertEquals(contentType1, response1.getContentType());
+        Assert.assertEquals(contentType1, response1.getContentType());
 
         // Call the upload method with the second file and content type
         GetObjectResponse response2 = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, fileName.get(contentType2), metadata, (contentType2), CONTENT_ENCODING, CONTENT_LANGUAGE, file2.getAbsolutePath());
 
         // Assert that the response's content-type match what we expect
-        assertEquals(contentType2, response2.getContentType());
+        Assert.assertEquals(contentType2, response2.getContentType());
 
         file1.delete();
         file2.delete();
@@ -132,8 +132,8 @@ public class TestUploadObject {
         GetObjectResponse response = uploadObject.uploadUsingOCIProfile(BUCKET_NAME, object, metadata, contentType, contentEncoding, contentLanguage, file.getAbsolutePath());
 
         // Verify the file was uploaded successfully
-        assertEquals(contentType, response.getContentType());
-        assertEquals(contentEncoding, response.getContentEncoding());
+        Assert.assertEquals(contentType, response.getContentType());
+        Assert.assertEquals(contentEncoding, response.getContentEncoding());
 
         // Cleanup the created file
         file.delete();
